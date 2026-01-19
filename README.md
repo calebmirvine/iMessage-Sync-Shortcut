@@ -1,30 +1,37 @@
 # iCloud Message Sync Automation
 
-A robust macOS automation tool built in Swift to programmatically trigger the "Sync Now" action for Messages in iCloud.
+This tool automates the "Sync Now" action for Messages in iCloud on macOS. It was built to replace a manual process with a more reliable, programmatically triggered solution.
 
-## 🚀 Overview
-Automating modern macOS System Settings (SwiftUI-based) is notoriously difficult for traditional AppleScript. This project leverages the native **macOS Accessibility API** and **CoreGraphics** to achieve reliable UI interaction, including deep element discovery and physical click simulation.
+## Project Context
+I developed this for my current workplace to handle a specific automation need. The goal was to ensure iMessage synchronization remains up to date across systems without manual intervention.
 
-## 🛠 Technology Stack
-- **Swift**: Core logic and process management.
-- **Accessibility API (AXUIElement)**: Used for deep recursive searching of the SwiftUI element tree (BFS algorithm).
-- **CoreGraphics (CGEvent)**: Simulates physical mouse movements and button presses (`leftMouseDown`/`leftMouseUp`).
-- **AppKit (NSWorkspace)**: Handles URL scheme navigation to target specific System Settings panes.
+### Core Skills
+- **Swift Development**: Using `Accessibility API` and `CoreGraphics` for UI interaction.
+- **AppleScript**: Prototyping and legacy fallback logic.
+- **Recursive Navigation**: Implementing search logic to find dynamic UI elements.
+- **Platform Detection**: Using Apple Shortcuts to route logic based on the device type.
 
-## 💡 Key Features
-- **Deep Search**: Recursively scans the UI hierarchy to find elements by Identifier or Label.
-- **Visual Feedback**: Physically depresses the UI button on-screen for user confirmation.
-- **Hardware Suppression**: Temporarily locks physical mouse movement during the click to prevent user interference.
-- **Shortcuts Ready**: Designed to run as a single-block shell script within the Apple Shortcuts app.
+## Cross-Platform Intelligence
+The automation is wrapped in an Apple Shortcut that detects the host device and executes the appropriate logic:
 
-## 📲 How to Integrate with Apple Shortcuts
-1. Create a new Shortcut in the **Shortcuts app**.
-2. Add a **"Run Shell Script"** action.
-3. Set the shell to `/bin/zsh`.
-4. Copy the Swift code from the source file and wrap it in a Swift execution block:
-   ```bash
-   /usr/bin/swift - <<'EOF'
-   // [Swift Code Here]
-   EOF
-   ```
-5. Grant the necessary **Accessibility Permissions** in System Settings when prompted.
+- **iOS**: Uses a direct URL scheme (`prefs:root=APPLE_ACCOUNT&path=ICLOUD_SERVICE/com.apple.Dataclass.Messages`) to quickly open the specific iCloud settings pane.
+- **macOS**: An intelligent handoff that prioritizes a **Swift-based native execution** for speed and precision, with an **AppleScript fallback** for menu-bar navigation if needed.
+
+## Implementation: AppleScript vs. Swift
+The project evolved from a prototype into a more robust native tool.
+
+### AppleScript (Prototype)
+The initial version (`navigation.applescript`) used standard System Events to interact with the menu bar and windows. While effective for simple tasks, it faced challenges with the more dynamic SwiftUI-based System Settings in newer macOS versions.
+
+### Swift (Native Implementation)
+To achieve better reliability and precision, I refactored the core logic into Swift (`navigation.swift`).
+- **Precision**: Uses the `Accessibility API` to find elements by their internal identifiers.
+- **Speed**: Provides a faster response time compared to the AppleScript interpreter.
+- **Visual Feedback**: Uses `CoreGraphics` to simulate physical clicks, giving the user visible confirmation of the sync action.
+
+## Key Features
+- **Dynamic UI Discovery**: Searches the UI hierarchy recursively to find buttons by ID or Label.
+- **Input Management**: Lock the cursor during the click event to prevent user interference.
+- **Shortcuts Ready**: Designed for seamless integration into macOS/iOS Shortcuts.
+
+
